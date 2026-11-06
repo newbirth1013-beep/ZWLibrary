@@ -5,17 +5,17 @@ set "ZWLIB_FRAMEWORK=%WINDIR%\Microsoft.NET\Framework64\v4.0.30319"
 set "ZWLIB_REF=%ProgramFiles(x86)%\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
 set "ZWLIB_CAD=%~1"
 if not defined ZWLIB_CAD set "ZWLIB_CAD=C:\Program Files\ZWSOFT\ZWCAD 2024"
-set "ZWLIB_OUT=output\v0.8.4"
+set "ZWLIB_OUT=output\v0.8.4-ai.1"
 if not exist "%ZWLIB_OUT%\plugin" mkdir "%ZWLIB_OUT%\plugin"
 if not exist "%ZWLIB_OUT%\build" mkdir "%ZWLIB_OUT%\build"
 set "ZWLIB_LOG=%ZWLIB_OUT%\build.log"
->"%ZWLIB_LOG%" echo ZWLibrary v0.8.4 / .NET Framework 4.8 / x64
+>"%ZWLIB_LOG%" echo ZWLibrary v0.8.4-ai.1 / .NET Framework 4.8 / x64
 if not exist "%ZWLIB_FRAMEWORK%\csc.exe" goto missing
 if not exist "%ZWLIB_REF%\mscorlib.dll" goto missing
 if not exist "%ZWLIB_REF%\PresentationFramework.dll" goto missing
 if not exist "%ZWLIB_CAD%\ZwManaged.dll" goto missing
 if not exist "%ZWLIB_CAD%\ZwDatabaseMgd.dll" goto missing
-set ZWLIB_BASE=/noconfig /nostdlib+ /reference:"%ZWLIB_REF%\mscorlib.dll" /reference:"%ZWLIB_REF%\System.dll" /reference:"%ZWLIB_REF%\System.Core.dll" /reference:"%ZWLIB_REF%\System.Xml.dll"
+set ZWLIB_BASE=/noconfig /nostdlib+ /reference:"%ZWLIB_REF%\mscorlib.dll" /reference:"%ZWLIB_REF%\System.dll" /reference:"%ZWLIB_REF%\System.Core.dll" /reference:"%ZWLIB_REF%\System.Xml.dll" /reference:"%ZWLIB_REF%\System.Net.Http.dll" /reference:"%ZWLIB_REF%\System.Web.Extensions.dll" /reference:"%ZWLIB_REF%\System.Security.dll" /reference:"%ZWLIB_REF%\System.Web.dll"
 "%ZWLIB_FRAMEWORK%\csc.exe" /nologo %ZWLIB_BASE% /target:exe /platform:x64 /out:"%ZWLIB_OUT%\build\CoreTests.exe" src\Core.cs src\Reporting.cs tests\CoreTests.cs tests\StructureTests.cs tests\FeatureTests.cs >>"%ZWLIB_LOG%" 2>&1
 if errorlevel 1 goto failed
 "%ZWLIB_OUT%\build\CoreTests.exe" >>"%ZWLIB_LOG%" 2>&1

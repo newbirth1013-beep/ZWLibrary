@@ -1,11 +1,12 @@
-[CmdletBinding(SupportsShouldProcess = $true)]
+﻿[CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [string]$SourceDirectory,
     [string]$RuntimeDirectory
 )
 $ErrorActionPreference = 'Stop'
 $scriptBase = Split-Path -Parent $MyInvocation.MyCommand.Path
-if (-not $SourceDirectory) { $SourceDirectory = Join-Path $scriptBase 'output/v0.8.4/plugin' }
+. (Join-Path $scriptBase 'FileHash.ps1')
+if (-not $SourceDirectory) { $SourceDirectory = Join-Path $scriptBase 'output/v0.8.4-ai.1/plugin' }
 if (-not $RuntimeDirectory) { $RuntimeDirectory = Join-Path $scriptBase 'runtime' }
 $source = [IO.Path]::GetFullPath((Join-Path $SourceDirectory 'ZWLibrary.dll'))
 $targetRoot = [IO.Path]::GetFullPath($RuntimeDirectory)
@@ -20,7 +21,7 @@ New-Item -ItemType Directory -Path $targetRoot -Force | Out-Null
 $temporary = Join-Path $targetRoot ([Guid]::NewGuid().ToString('N') + '.tmp')
 try {
     Copy-Item -LiteralPath $source -Destination $temporary
-    if ((Get-FileHash -LiteralPath $source).Hash -ne (Get-FileHash -LiteralPath $temporary).Hash) { throw 'DLL copy verification failed.' }
+    if ((Get-ZwFileHash -LiteralPath $source).Hash -ne (Get-ZwFileHash -LiteralPath $temporary).Hash) { throw 'DLL copy verification failed.' }
     if (Test-Path -LiteralPath $target) {
         $backupRoot = Join-Path $targetRoot 'backups'
         New-Item -ItemType Directory -Path $backupRoot -Force | Out-Null

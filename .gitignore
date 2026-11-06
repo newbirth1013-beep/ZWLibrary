@@ -26,3 +26,7 @@ catalog.xml
 catalog.xml.bak
 session.lock
 host.txt
+
+*.tmp
+*.zip
+*.sha256

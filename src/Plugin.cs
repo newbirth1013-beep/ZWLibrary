@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -16,8 +16,8 @@ using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
 
 [assembly: CommandClass(typeof(ZWLibrary.Plugin))]
-[assembly: System.Reflection.AssemblyVersion("0.8.4.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.8.4.0")]
+[assembly: System.Reflection.AssemblyVersion("0.8.4.1")]
+[assembly: System.Reflection.AssemblyFileVersion("0.8.4.1")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.8", FrameworkDisplayName = ".NET Framework 4.8")]
 
 namespace ZWLibrary
@@ -83,6 +83,11 @@ namespace ZWLibrary
                     palette.Add("부품", panel);
                     symbolsPanel = new GeometryPanel(false); layoutsPanel = new GeometryPanel(true);
                     palette.Add("심볼 관리", symbolsPanel); palette.Add("배치도형 관리", layoutsPanel);
+                    var agentTab = new System.Windows.Forms.Panel { Dock = DockStyle.Fill };
+                    var agentButton = new Button { Text = "AI 보조 창 열기 (ZLIBAI)", Dock = DockStyle.Top, Height = 45 };
+                    agentButton.Click += delegate { try { Queue("ZLIBAI", null); } catch (System.Exception ex) { MessageBox.Show(ex.Message); } };
+                    agentTab.Controls.Add(new Label { Text = "ChatGPT 로그인으로 선택 부품 조회와 번호 변경 제안\r\n연결 부품의 번호 변경은 이번 시험판에서 지원하지 않습니다.", Dock = DockStyle.Fill });
+                    agentTab.Controls.Add(agentButton); palette.Add("AI 보조", agentTab);
                     palette.KeepFocus = false;
                 }
                 panel.Reload(); symbolsPanel.Reload(); layoutsPanel.Reload(); palette.Visible = true;

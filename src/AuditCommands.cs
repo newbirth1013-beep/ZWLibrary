@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -19,7 +19,7 @@ namespace ZWLibrary
         public void PerformanceInfo()
         {
             var doc = CadApp.DocumentManager.MdiActiveDocument; if (doc == null) return;
-            var report = new StringBuilder("\nZWLibrary v0.8.4 성능 진단 (읽기 전용)\n");
+            var report = new StringBuilder("\nZWLibrary v0.8.4-ai.1 성능 진단 (읽기 전용)\n");
             foreach (string name in new[] { "OSMODE", "3DOSMODE", "DYNMODE", "SELECTIONPREVIEW", "SELECTIONCYCLING", "ROLLOVERTIPS" })
                 try { report.AppendLine(name + "=" + Convert.ToString(CadApp.GetSystemVariable(name), CultureInfo.InvariantCulture)); }
                 catch { report.AppendLine(name + "=지원하지 않음"); }
@@ -49,7 +49,7 @@ namespace ZWLibrary
         {
             var doc = CadApp.DocumentManager.MdiActiveDocument;
             if (doc != null)
-                doc.Editor.WriteMessage("\nZWLibrary v0.8.4 로딩 성공. 공용 심볼·개별 부품·배치도형 관리: ZLIB / 도면 검사: ZLIBSCAN\n");
+                doc.Editor.WriteMessage("\nZWLibrary v0.8.4-ai.1 로딩 성공. 공용 심볼·개별 부품·배치도형 관리: ZLIB / 도면 검사: ZLIBSCAN\n");
         }
 
         [CommandMethod("ZLIBSCAN")]
@@ -110,7 +110,7 @@ namespace ZWLibrary
         private static string BuildReport(Database db, string name)
         {
             var report = new StringBuilder();
-            report.AppendLine("ZWLibrary 도면 구조 검사 / v0.8.4");
+            report.AppendLine("ZWLibrary 도면 구조 검사 / v0.8.4-ai.1");
             report.AppendLine("파일: " + name);
             report.AppendLine("검사 시각 UTC: " + DateTime.UtcNow.ToString("o"));
             report.AppendLine("삽입 단위: " + db.Insunits);
