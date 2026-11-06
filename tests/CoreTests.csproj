@@ -1,0 +1,12 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>..\output\v0.8.4\build\</OutputPath>
+    <AssemblyName>CoreTests</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup><Reference Include="System" /><Reference Include="System.Core" /><Reference Include="System.Xml" /></ItemGroup>
+  <ItemGroup><Compile Include="../src/Core.cs" /><Compile Include="../src/Reporting.cs" /><Compile Include="FeatureTests.cs" /><Compile Include="CoreTests.cs" /><Compile Include="StructureTests.cs" /></ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
