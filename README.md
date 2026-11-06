@@ -47,3 +47,11 @@ TEST_UI_WINDOWS.cmd
 - https://developers.openai.com/siwc/token-sharing-open-source/sign-in
 - https://developers.openai.com/siwc/token-sharing-open-source/profiles-and-sessions
 - https://developers.openai.com/siwc/token-sharing-open-source/models-and-inference
+
+## ZWCAD 재시작 없이 로그인 연결 시험
+
+`BUILD_CONNECTION_CHECK.cmd`로 `output/connection-check/ConnectionCheck.exe`를 빌드할 수 있습니다.
+실행 후 Continue with ChatGPT를 누르면 기본 브라우저에서 로그인합니다.
+로그인 및 모델 조회 후 모델을 선택하고 연결 확인을 누르세요. 실제 도면 정보 없이 짧은 시험 요청만 전송합니다.
+로그인 정보는 플러그인과 같은 암호화 저장소를 사용합니다. 비밀정보는 상태 파일에 기록하지 않습니다.
+이 도구는 도면을 열거나 수정하지 않으며, 성공해도 실제 CAD 작업 검증을 대신하지 않습니다.

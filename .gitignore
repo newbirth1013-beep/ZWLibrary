@@ -30,3 +30,6 @@ host.txt
 *.tmp
 *.zip
 *.sha256
+
+connection-status.txt
+
