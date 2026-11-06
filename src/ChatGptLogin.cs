@@ -83,6 +83,7 @@ namespace ZWLibrary
         }
         internal static HttpClient Client()
         {
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
             return new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = TimeSpan.FromSeconds(60) };
         }
         private static async Task<Dictionary<string, object>> Token(Dictionary<string, string> fields, CancellationToken ct)

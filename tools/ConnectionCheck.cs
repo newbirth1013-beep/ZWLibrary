@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using ZWLibrary;
+[assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.8")]
 class ConnectionCheck : Form
 {
  readonly Button login = new Button {Text="Continue with ChatGPT",Dock=DockStyle.Top,Height=44};
@@ -29,7 +30,7 @@ class ConnectionCheck : Form
     models.SelectedIndex=0;test.Enabled=true;
     State("models_ready","로그인 및 모델 목록 조회 성공. 모델을 선택하고 연결 확인을 누르세요.\r\n이 시험은 도면을 읽거나 수정하지 않습니다.");
    } catch(OperationCanceledException){State("cancelled","로그인이 취소되었거나 시간이 초과됐습니다.");}
-     catch(Exception ex){State("failed",ex.Message);}
+     catch(Exception ex){State("failed",ex.GetType().Name + ": " + ex.Message + (ex.InnerException == null ? "" : "\r\n" + ex.InnerException.GetType().Name + ": " + ex.InnerException.Message));}
    finally{if(!IsDisposed)login.Enabled=true;}
   };
   test.Click+=async delegate {
@@ -39,7 +40,7 @@ class ConnectionCheck : Form
     State("testing","ChatGPT 구독으로 짧은 연결 확인 요청을 보냅니다. 도면 정보는 전송하지 않습니다.");
     var response=await AgentApi.Ask(selected.Slug,"연결 시험입니다. 작업 변경 없이 연결 확인 성공이라고 한국어로 설명하세요.","시험용 정보: 관리 부품 0개. 실제 도면 데이터 없음.");
     State("request_succeeded","로그인·모델 조회·AI 응답 완료 확인 성공.\r\n"+response.explanation+"\r\n이제 ZWCAD에서 같은 로그인 정보로 시험할 수 있습니다.");
-   } catch(Exception ex){State("failed",ex.Message);}
+   } catch(Exception ex){State("failed",ex.GetType().Name + ": " + ex.Message + (ex.InnerException == null ? "" : "\r\n" + ex.InnerException.GetType().Name + ": " + ex.InnerException.Message));}
    finally{if(!IsDisposed)login.Enabled=test.Enabled=models.Enabled=true;}
   };
   FormClosing+=delegate {cancel.Cancel();};
