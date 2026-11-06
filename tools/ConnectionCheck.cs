@@ -54,6 +54,18 @@ class ConnectionCheck : Form
  }
  [STAThread]static void Main(string[] args)
  {
+  if(args.Length>1 && args[1]=="--probe") {
+   try {
+    System.Threading.Tasks.Task.Run(async delegate {
+     var list=await ChatGptLogin.Models(CancellationToken.None);
+     if(list.Count==0)throw new InvalidOperationException("계정에서 사용할 모델이 없습니다.");
+     File.WriteAllText(Path.GetFullPath(args[0]),"testing"+Environment.NewLine+"모델: "+list[0].Slug);
+     var answer=await AgentApi.Ask(list[0].Slug,"연결 시험입니다. 작업 변경 없이 연결 확인 성공이라고 한국어로 설명하세요.","시험용 정보: 관리 부품 0개. 실제 도면 데이터 없음.");
+     File.WriteAllText(Path.GetFullPath(args[0]),"request_succeeded"+Environment.NewLine+"모델: "+list[0].Slug+Environment.NewLine+answer.explanation);
+    }).GetAwaiter().GetResult();
+   }catch(Exception ex){File.WriteAllText(Path.GetFullPath(args[0]),"failed"+Environment.NewLine+ex.GetType().Name+": "+ex.Message+(ex.InnerException==null?"":Environment.NewLine+ex.InnerException.GetType().Name+": "+ex.InnerException.Message));}
+   return;
+  }
   Application.EnableVisualStyles();Application.SetCompatibleTextRenderingDefault(false);
   string path=args.Length>0?Path.GetFullPath(args[0]):Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"connection-status.txt");
   using(var form=new ConnectionCheck(path,args.Length>1&&args[1]=="--login"))Application.Run(form);

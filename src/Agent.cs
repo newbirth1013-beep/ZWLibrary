@@ -38,13 +38,23 @@ namespace ZWLibrary
                     if (!ReferenceEquals(doc, CadApp.DocumentManager.MdiActiveDocument)) throw new InvalidOperationException("도면이 변경되었습니다.");
                     var original = data.Instances.SingleOrDefault(i => i.PhysicalKey == plan.handle);
                     if (original == null || plan.old_tag != (original.Tag ?? "")) throw new InvalidOperationException("선택 범위 밖이거나 기존 번호가 일치하지 않습니다.");
-                    using (var tr = doc.Database.TransactionManager.StartTransaction()) {
-                        var id = doc.Database.GetObjectId(false, new Handle(Convert.ToInt64(plan.handle, 16)), 0);
+                    ApplyAgentPlan(doc.Database, plan, original);
+                    doc.Editor.Regen(); doc.Editor.WriteMessage("\nAI 번호 변경 완료: " + plan.handle + " " + plan.old_tag + " → " + plan.new_tag + " (U 명령으로 취소 가능, 저장은 별도)\n");
+                }
+            });
+        }
+        private static void ApplyAgentPlan(Database db, AgentPlan plan, Instance original)
+        {
+            plan.Validate();
+            if (plan.action != "rename" || original == null || original.PhysicalKey != plan.handle || (original.Tag ?? "") != plan.old_tag)
+                throw new InvalidOperationException("선택 대상 또는 변경 전 번호가 일치하지 않습니다.");
+                    using (var tr = db.TransactionManager.StartTransaction()) {
+                        var id = db.GetObjectId(false, new Handle(Convert.ToInt64(plan.handle, 16)), 0);
                         var br = (BlockReference)tr.GetObject(id, OpenMode.ForRead);
                         var current = ReadCurrentInstance(br, tr);
                         if (current == null || current.Tag != original.Tag || current.Panel != original.Panel || current.Part.Signature != original.Part.Signature) throw new InvalidOperationException("부품 정보가 변경되었습니다. 다시 조회하세요.");
                         if (!string.IsNullOrEmpty(current.LinkId) || !string.IsNullOrEmpty(current.LayoutSourceHandle) || !string.IsNullOrEmpty(current.LinkOwnerHandle)) throw new InvalidOperationException("연결 부품의 동시 번호 변경은 이번 개발본에서 지원하지 않습니다.");
-                        var blocks = (BlockTable)tr.GetObject(doc.Database.BlockTableId, OpenMode.ForRead);
+                        var blocks = (BlockTable)tr.GetObject(db.BlockTableId, OpenMode.ForRead);
                         foreach (ObjectId blockId in blocks) {
                             var space = (BlockTableRecord)tr.GetObject(blockId, OpenMode.ForRead); if (!space.IsLayout) continue;
                             foreach (ObjectId otherId in space) {
@@ -64,9 +74,6 @@ namespace ZWLibrary
                         if (verified == null || verified.Tag != plan.new_tag) throw new InvalidOperationException("변경 확인 실패. 작업을 취소합니다.");
                         tr.Commit();
                     }
-                    doc.Editor.Regen(); doc.Editor.WriteMessage("\nAI 번호 변경 완료: " + plan.handle + " " + plan.old_tag + " → " + plan.new_tag + " (U 명령으로 취소 가능, 저장은 별도)\n");
-                }
-            });
         }
     }
 }

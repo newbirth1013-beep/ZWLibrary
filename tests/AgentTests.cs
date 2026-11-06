@@ -57,6 +57,20 @@ class AgentTests {
    ChatGptLogin.Save(new ChatGptSession {ClientId="fixture",Subject="subject",AccessToken="rotated"});
    Check(ChatGptLogin.Load().AccessToken=="rotated");
   } finally { foreach(var file in Directory.GetFiles(testRoot)) File.Delete(file); Directory.Delete(testRoot); }
+  var outgoing=AgentApi.Json.Deserialize<Dictionary<string,object>>(AgentApi.Json.Serialize(AgentApi.BuildRequest("test-model","test-request","test-context")));
+  Check(!(outgoing["input"] is string) && outgoing["input"] is System.Collections.IEnumerable);
+  Check((bool)outgoing["stream"] && !(bool)outgoing["store"]);
+  var messages=((System.Collections.IEnumerable)outgoing["input"]).GetEnumerator();Check(messages.MoveNext());
+  Check(((Dictionary<string,object>)messages.Current)["role"].ToString()=="user");
+  var state=new AgentApi.StreamState();
+  string done=AgentApi.Json.Serialize(new { type="response.output_text.done", item_id="msg", content_index=0, text=AgentApi.Json.Serialize(new AgentPlan {action="explain",explanation="연결 확인 성공"}) });
+  Check(state.Accept(done)==null);
+  Check(state.Accept("{\"type\":\"response.completed\",\"response\":{\"status\":\"completed\",\"output\":[]}}").action=="explain");
+  var interrupted=new AgentApi.StreamState();interrupted.Accept(done);
+  Reject(()=>interrupted.Accept("{\"type\":\"response.incomplete\"}"));
+  var refusal=new AgentApi.StreamState();refusal.Accept(done);refusal.Accept("{\"type\":\"response.refusal.done\"}");
+  Reject(()=>refusal.Accept("{\"type\":\"response.completed\",\"response\":{\"status\":\"completed\",\"output\":[]}}"));
+  Reject(()=>new AgentApi.StreamState().Accept("{\"type\":\"response.completed\",\"response\":{\"status\":\"completed\",\"output\":[]}}"));
   Console.WriteLine("Agent tests PASS: "+n);
  }
  static string Signed(RSACryptoServiceProvider rsa,Dictionary<string,object> claims) {

@@ -1,4 +1,4 @@
-# ZWLibrary ChatGPT 로그인 시험판
+﻿# ZWLibrary ChatGPT 로그인 시험판
 
 v0.8.4 기반의 로그인 AI 보조 기능입니다. 어셈블리 버전은 0.8.4.1입니다.
 MCP 없이 ZWCAD 내부 플러그인이 검증된 작업 제안을 실행합니다.
@@ -13,7 +13,7 @@ MCP 없이 ZWCAD 내부 플러그인이 검증된 작업 제안을 실행합니�
 6. 기기번호 변경을 요청할 때는 제안을 확인한 뒤 적용 버튼을 누릅니다.
 
 API 키와 API 결제 자동 전환은 사용하지 않습니다. 지원 플랜·앱 등록·권한·사용 한도에 따라 이용이 제한될 수 있습니다.
-실제 계정 로그인과 구독 추론은 아직 검증 완료되지 않았습니다.
+실제 ChatGPT 로그인, 모델 조회 및 구독 추론 응답 완료를 확인했습니다.
 
 ## 기능과 제한
 
@@ -39,8 +39,8 @@ TEST_AGENT.cmd
 TEST_UI_WINDOWS.cmd
 ```
 
-핵심 249개 / UI 48개 / 업데이트 7개 / 인증·AI 30개: 총 334개 검사 통과.
-실제 계정 로그인·구독 사용 및 실제 CAD 수정·실행 취소·재열기는 별도 검증 대상입니다.
+핵심 249개 / UI 48개 / 업데이트 7개 / 인증·AI 39개: 총 343개 검사 통과.
+실제 로그인·모델 조회·구독 AI 응답과 CAD 메모리 DB 검사 5개를 통과했습니다. 실제 작업 도면의 대화창 적용·UNDO·저장 후 재열기는 별도 검증 대상입니다.
 자체 작성 코드는 MIT LICENSE를 따릅니다. SDK·도면·제조사 자산은 포함하지 않습니다.
 
 공식 연동 근거:
@@ -50,8 +50,15 @@ TEST_UI_WINDOWS.cmd
 
 ## ZWCAD 재시작 없이 로그인 연결 시험
 
-`BUILD_CONNECTION_CHECK.cmd`로 `output/connection-check/ConnectionCheck.exe`를 빌드할 수 있습니다.
+`BUILD_CONNECTION_CHECK.cmd`로 `output/connection-check/ZWLibrary-ConnectionCheck.exe`를 빌드할 수 있습니다.
 실행 후 Continue with ChatGPT를 누르면 기본 브라우저에서 로그인합니다.
 로그인 및 모델 조회 후 모델을 선택하고 연결 확인을 누르세요. 실제 도면 정보 없이 짧은 시험 요청만 전송합니다.
 로그인 정보는 플러그인과 같은 암호화 저장소를 사용합니다. 비밀정보는 상태 파일에 기록하지 않습니다.
 이 도구는 도면을 열거나 수정하지 않으며, 성공해도 실제 CAD 작업 검증을 대신하지 않습니다.
+
+## ZWCAD 메모리 DB 검증
+
+BUILD_HOST_CHECK.ps1로 시험용 어셈블리와 로더를 빌드합니다.
+ZWCAD에서 output/host-check/HostCheckLoader.dll을 NETLOAD하고 ZWLIBMEMCHECK를 실행합니다.
+이 검사는 별도 메모리 DB에서 번호 변경·중복 차단·오래된 정보 차단·역변경·연결 부품 차단을 확인합니다. 활성 작업 도면은 읽거나 수정하지 않습니다.
+이는 실제 도면에서의 UNDO 및 저장·재열기 시험을 대신하지 않습니다.
